@@ -23,13 +23,11 @@ if (!sessionSecret || !sessionSalt) {
 async function launchBot(key: Types.GeneratedKey, client?: Client) {
 	const auth = await useSafeMultiAuthState(key, 'sessions');
 
-	let waClient: Client | undefined = client;
-	if (!waClient)
-		waClient ??= makeWASocket({
-			auth: auth.state,
-		});
+	client ??= makeWASocket({
+		auth: auth.state,
+	});
 
-	waClient.ev.on('connection.update', async (conn) => {
+	client.ev.on('connection.update', async (conn) => {
 		if (conn.qr) {
 			qrImage
 				.image(conn.qr, {type: 'png'})
@@ -54,16 +52,16 @@ async function launchBot(key: Types.GeneratedKey, client?: Client) {
 					await fsPromises.unlink(pathResolve(__dirname, 'sessions'));
 					break;
 				case DisconnectReason.restartRequired:
-					waClient = undefined;
+					client = undefined;
 					void launchBot(key);
 					break;
 				case DisconnectReason.badSession:
 					await fsPromises.unlink(pathResolve(__dirname, 'sessions'));
-					waClient = undefined;
+					client = undefined;
 					void launchBot(key);
 					break;
 				default:
-					waClient = undefined;
+					client = undefined;
 					void launchBot(key);
 			}
 		}
@@ -71,7 +69,7 @@ async function launchBot(key: Types.GeneratedKey, client?: Client) {
 		await auth.saveCreds();
 	});
 
-	waClient.ev.on('messages.upsert', ({messages}) => {
+	client.ev.on('messages.upsert', ({messages}) => {
 		const msg = messages.at(0);
 		if (msg) {
 			console.log(msg);
