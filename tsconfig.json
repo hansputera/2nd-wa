@@ -19,7 +19,9 @@
 		"outDir": "./dist",
 		"baseUrl": ".",
 		"paths": {
-			"@typings/*": ["./src/@typings/*"]
+			"@typings/*": ["./src/@typings/*"],
+			"@actions/*": ["./src/actions/*"],
+			"@utils": ["./src/utils.ts"]
 		}
 	}
 }

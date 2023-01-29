@@ -1,6 +1,8 @@
 import 'dotenv/config';
+import {messagesHandler} from './messages';
 import {type Client} from '@typings/bot';
-import makeWASocket, {DisconnectReason} from '@adiwajshing/baileys';
+import makeWASocket, {Browsers, DisconnectReason} from '@adiwajshing/baileys';
+import rimraf from 'rimraf';
 
 import {
 	generateKey,
@@ -9,7 +11,7 @@ import {
 } from 'safe-usemultiauthstate';
 import qrImage from 'qr-image';
 import {resolve as pathResolve} from 'node:path';
-import {createWriteStream, existsSync, promises as fsPromises} from 'node:fs';
+import {createWriteStream, existsSync} from 'node:fs';
 
 const [sessionSecret, sessionSalt] = [
 	Reflect.get(process.env, 'SESSION_KEY'),
@@ -25,6 +27,8 @@ async function launchBot(key: Types.GeneratedKey, client?: Client) {
 
 	client ??= makeWASocket({
 		auth: auth.state,
+		markOnlineOnConnect: true,
+		browser: Browsers.ubuntu('Firefox'),
 	});
 
 	client.ev.on('connection.update', async (conn) => {
@@ -36,7 +40,7 @@ async function launchBot(key: Types.GeneratedKey, client?: Client) {
 
 		if (conn.isNewLogin && conn.connection === 'open') {
 			if (existsSync(pathResolve(__dirname, 'qr.png'))) {
-				await fsPromises.unlink(pathResolve(__dirname, 'qr.png'));
+				await rimraf(pathResolve(__dirname, 'qr.png'));
 			}
 		}
 
@@ -49,14 +53,14 @@ async function launchBot(key: Types.GeneratedKey, client?: Client) {
 				).output.statusCode
 			) {
 				case DisconnectReason.loggedOut:
-					await fsPromises.unlink(pathResolve(__dirname, 'sessions'));
+					await rimraf(pathResolve(__dirname, 'sessions'));
 					break;
 				case DisconnectReason.restartRequired:
 					client = undefined;
 					void launchBot(key);
 					break;
 				case DisconnectReason.badSession:
-					await fsPromises.unlink(pathResolve(__dirname, 'sessions'));
+					await rimraf(pathResolve(__dirname, 'sessions'));
 					client = undefined;
 					void launchBot(key);
 					break;
@@ -70,10 +74,7 @@ async function launchBot(key: Types.GeneratedKey, client?: Client) {
 	});
 
 	client.ev.on('messages.upsert', ({messages}) => {
-		const msg = messages.at(0);
-		if (msg) {
-			console.log(msg);
-		}
+		void messagesHandler(client!, messages);
 	});
 }
 
