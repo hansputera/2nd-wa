@@ -51,17 +51,17 @@ export const schedulesHandler = async (
 										proto.Message.ListMessage.Row.create({
 											title: r.code
 												? r
-														.teacher!.mapel.map((x) =>
-															capitalCase(x.replace(/_/g, ' ')),
-														)
-														.join(', ')
+													.teacher!.mapel.map((x) =>
+													capitalCase(x.replace(/_/g, ' ')),
+												)
+													.join(', ')
 												: 'Istirahat',
 											rowId: `${entry[0]}_${classTarget}_${r.urutan}`,
 											description: `Dari ${cleanSpace(
 												r.beginAt,
-											)} hingga ${cleanSpace(
-												r.endAt,
-											)}, dengan nama pengajar ${r.teacher!.nama}`,
+											)} hingga ${cleanSpace(r.endAt)}${
+												r.code ? `, dengan ${r.teacher!.nama}` : ''
+											}`,
 										}),
 									),
 							}),
