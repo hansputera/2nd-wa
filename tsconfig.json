@@ -21,7 +21,8 @@
 		"paths": {
 			"@typings/*": ["./src/@typings/*"],
 			"@actions/*": ["./src/actions/*"],
-			"@utils": ["./src/utils.ts"]
+			"@utils": ["./src/utils.ts"],
+			"@structures/*": ["./src/structures/*"]
 		}
 	}
 }

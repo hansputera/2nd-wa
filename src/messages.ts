@@ -2,6 +2,7 @@ import {type proto} from '@adiwajshing/baileys';
 import {type Client} from '@typings/bot';
 
 import {schedulesRegex, schedulesHandler} from '@actions/school-schedules';
+import {CommandContext} from '@structures/context';
 
 export const messagesHandler = async (
 	client: Client,
@@ -21,6 +22,17 @@ export const messagesHandler = async (
 					schedulesRegex.exec(text) ?? [],
 				);
 			}
+		}
+
+		const commandContext = new CommandContext(
+			msg,
+			process.env.PREFIXES?.split(/\s+/g) ?? ['.'],
+		);
+
+		if (commandContext.isCommand) {
+			Reflect.set(commandContext, 'client', client);
+
+			await commandContext.getCommand()?.init(commandContext);
 		}
 	}
 };

@@ -3,6 +3,7 @@ import {messagesHandler} from './messages';
 import {type Client} from '@typings/bot';
 import makeWASocket, {Browsers, DisconnectReason} from '@adiwajshing/baileys';
 import rimraf from 'rimraf';
+import './commands';
 
 import {
 	generateKey,

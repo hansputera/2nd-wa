@@ -1,3 +1,7 @@
+import {Collection} from '@discordjs/collection';
+import {type BaseCommand} from '@structures/command';
+import {type CommandOptions} from '@typings/bot';
+
 export const capitalCase = (text: string): string =>
 	text
 		.split(/\s+/g)
@@ -6,3 +10,13 @@ export const capitalCase = (text: string): string =>
 
 export const cleanSpace = (text: string): string =>
 	text.trim().replace(/\s+/g, '');
+
+export const waCommands = new Collection<string, BaseCommand>();
+export const registerCommand = <T extends typeof BaseCommand>(
+	options: CommandOptions,
+	Target: T,
+) => {
+	const instance = new Target(options);
+
+	waCommands.set(options.name, instance);
+};
