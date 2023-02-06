@@ -28,3 +28,10 @@ export const isValidUrl = (url: string): boolean => {
 		return false;
 	}
 };
+
+export const chunkArray = <T>(arr: T[], size: number): T[][] =>
+	arr.reduce(
+		(acc, _, i) =>
+			i % size ? (acc as T[]) : [...acc, arr.slice(i, i + size)],
+		[],
+	) as T[][];

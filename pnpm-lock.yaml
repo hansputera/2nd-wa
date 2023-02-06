@@ -17,7 +17,7 @@ specifiers:
   prettier: ^2.8.3
   qr-image: ^3.2.0
   rimraf: ^4.1.2
-  safe-usemultiauthstate: ^1.1.6
+  safe-usemultiauthstate: ^1.1.8
   tsup: ^6.5.0
   typescript: ^4.9.5
 
@@ -28,7 +28,7 @@ dependencies:
   axios: 1.3.2
   dotenv: 16.0.3
   qr-image: 3.2.0
-  safe-usemultiauthstate: 1.1.6
+  safe-usemultiauthstate: 1.1.8
 
 devDependencies:
   '@types/node': 18.11.19
@@ -1786,8 +1786,8 @@ packages:
     engines: {node: '>=10'}
     dev: false
 
-  /safe-usemultiauthstate/1.1.6:
-    resolution: {integrity: sha512-pI40ouUBltsoHJUsGyOsb4q11K8PKLRxlMGH2lJOCN+bPf5O0ZWO2XGYk6xVR9qpsVhr7DkiR7Oh+l3cE6mYCQ==}
+  /safe-usemultiauthstate/1.1.8:
+    resolution: {integrity: sha512-pmCoOUF0Wa1OEn89zvhP/NV6ZfNyOdnY8w2ldyA+fpzMRoDRSbprr+ZqZTLrSmQVsItQWKp37uoctDATJnH6Gw==}
     engines: {node: '>=12.x'}
     dependencies:
       '@adiwajshing/baileys': 5.0.0

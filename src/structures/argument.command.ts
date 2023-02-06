@@ -57,11 +57,11 @@ export class ArgumentContext {
 			switch (argument.type) {
 				case 'number':
 					if (/[0-9]+/gi.test(valueOfArg)) {
-						Reflect.set(argument, 'value', parseInt(valueOfArg, 10));
+						argument.value = parseInt(valueOfArg.trim(), 10);
 						break;
 					} else {
 						if (argument.default) {
-							Reflect.set(argument, 'value', argument.default);
+							argument.value = argument.default;
 							break;
 						}
 
@@ -70,11 +70,11 @@ export class ArgumentContext {
 
 				case 'url':
 					if (isValidUrl(valueOfArg)) {
-						Reflect.set(argument, 'value', valueOfArg.trim());
+						argument.value = valueOfArg.trim();
 						break;
 					} else {
 						if (argument.default) {
-							Reflect.set(argument, 'value', argument.default);
+							argument.value = argument.default;
 							break;
 						}
 
@@ -82,7 +82,7 @@ export class ArgumentContext {
 					}
 
 				default:
-					Reflect.set(argument, 'value', valueOfArg.trim());
+					argument.value = valueOfArg.trim();
 					break;
 			}
 

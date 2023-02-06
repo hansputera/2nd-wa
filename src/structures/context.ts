@@ -1,4 +1,4 @@
-import {type proto} from '@adiwajshing/baileys';
+import {type AnyMessageContent, type proto} from '@adiwajshing/baileys';
 import {
 	Lexer,
 	Parser,
@@ -28,7 +28,7 @@ export class CommandContext {
 	 * @param {string[]} prefixes Command prefixes
 	 */
 	constructor(
-		private readonly msg: proto.IWebMessageInfo,
+		public readonly msg: proto.IWebMessageInfo,
 		private readonly prefixes: string[],
 	) {}
 
@@ -54,7 +54,7 @@ export class CommandContext {
 	}
 
 	get args(): string[] {
-		return this.#data.ordered.map((order) => order.value).slice(1, 0);
+		return this.#data.ordered.map((order) => order.value).slice(1);
 	}
 
 	get isCommand(): boolean {
@@ -100,15 +100,9 @@ export class CommandContext {
 		);
 	}
 
-	async reply(text: string): Promise<void> {
-		await this.client?.sendMessage(
-			this.msg.key.remoteJid!,
-			{
-				text,
-			},
-			{
-				quoted: this.msg,
-			},
-		);
+	async reply(content: AnyMessageContent): Promise<void> {
+		await this.client?.sendMessage(this.msg.key.remoteJid!, content, {
+			quoted: this.msg,
+		});
 	}
 }
