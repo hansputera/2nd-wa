@@ -9,6 +9,7 @@ export type Argument<T extends ArgumentType> = {
 	name: string;
 	required?: boolean;
 	isOption?: boolean;
+	error?: Error | string;
 };
 
 export type CommandOptions = {

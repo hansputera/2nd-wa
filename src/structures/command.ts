@@ -2,9 +2,9 @@ import {
 	type ArgumentType,
 	type CommandOptions,
 	type Argument,
-	type Client,
 } from '@typings/bot';
 import {type CommandContext} from '@structures/context';
+import {ArgumentContext} from '@structures/argument.command';
 
 export class BaseCommand {
 	public name!: string;
@@ -12,8 +12,7 @@ export class BaseCommand {
 	public args: Array<Argument<ArgumentType>> = [];
 	public cooldown!: number;
 	public aliases: string[] = [];
-
-	#client!: Client;
+	public argsInstance!: ArgumentContext;
 
 	/**
 	 * @constructor
@@ -38,17 +37,18 @@ export class BaseCommand {
 
 	async init(context: CommandContext): Promise<void> {
 		if (typeof this.run === 'function') {
-			await this.run(context);
+			this.argsInstance = new ArgumentContext(context, this.args);
+			await this.run(context).catch(async (err: Error) => {
+				if (
+					typeof err === 'object' &&
+					Reflect.has(err, 'message') &&
+					Reflect.has(err, 'name')
+				) {
+					await context.reply(
+						`An error occured:\n${err.name}: ${err.message}`,
+					);
+				}
+			});
 		}
-	}
-
-	/**
-	 * Override client
-	 * @param {Client} client WhatsApp Bot Client
-	 * @return {BaseCommand}
-	 */
-	setClient(client: Client): this {
-		this.#client = client;
-		return this;
 	}
 }
