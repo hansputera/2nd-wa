@@ -57,6 +57,19 @@ export class CommandContext {
 		return this.#data.ordered.map((order) => order.value).slice(1);
 	}
 
+	get buttons():
+	| proto.Message.IButtonsResponseMessage
+	| proto.Message.ITemplateButtonReplyMessage
+	| proto.Message.IListResponseMessage
+	| undefined {
+		return (
+			this.msg.message?.buttonsResponseMessage ??
+			this.msg.message?.templateButtonReplyMessage ??
+			this.msg.message?.listResponseMessage ??
+			undefined
+		);
+	}
+
 	get isCommand(): boolean {
 		for (const prefix of this.prefixes) {
 			if (this.content.toLowerCase().startsWith(prefix)) {
@@ -64,7 +77,19 @@ export class CommandContext {
 			}
 		}
 
-		return false;
+		return Boolean(this.buttons) && Boolean(this.getButtonId());
+	}
+
+	getButtonId(): string | undefined {
+		return (
+			(this.buttons as proto.Message.IListResponseMessage)?.singleSelectReply
+				?.selectedRowId ??
+			(this.buttons as proto.Message.ITemplateButtonReplyMessage)
+				?.selectedId ??
+			(this.buttons as proto.Message.IButtonsResponseMessage)
+				?.selectedButtonId ??
+			undefined
+		);
 	}
 
 	get prefixMatch(): string | undefined {
@@ -86,7 +111,8 @@ export class CommandContext {
 	getCommand<T extends BaseCommand>(): T {
 		return waCommands.find(
 			(cmd) =>
-				cmd.name === this.command || cmd.aliases.includes(this.command!),
+				cmd.name === (this.command ?? this.getButtonId()) ||
+				cmd.aliases.includes(this.command ?? this.getButtonId()!),
 		) as T;
 	}
 
