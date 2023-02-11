@@ -17,7 +17,7 @@ export class MenuCommand extends BaseCommand {
 
 			if (!command) {
 				await context.reply({
-					text: "I couldn't find the command!",
+					text: 'I couldn\'t find that command!',
 				});
 				return;
 			}

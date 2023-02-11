@@ -32,7 +32,9 @@ export class BaseCommand {
 	}
 
 	async run(context: CommandContext): Promise<void> {
-		await context.reply(`It's a default message for ${this.name} command`);
+		await context.reply({
+			text: `It's a default message for ${this.name} command`,
+		});
 	}
 
 	async init(context: CommandContext): Promise<void> {
@@ -44,9 +46,9 @@ export class BaseCommand {
 					Reflect.has(err, 'message') &&
 					Reflect.has(err, 'name')
 				) {
-					await context.reply(
-						`An error occured:\n${err.name}: ${err.message}`,
-					);
+					await context.reply({
+						text: `An error occured:\n${err.name}: ${err.message}`,
+					});
 				}
 			});
 		}

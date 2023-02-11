@@ -4,10 +4,10 @@ import type {Argument, ArgumentType} from '@typings/bot';
 import {isValidUrl} from '@utils';
 
 export class ArgumentContext {
-	#data = new Collection<
-		string,
-		Argument<ArgumentType> | Array<Argument<ArgumentType>>
-	>();
+	#data!: Collection<
+	string,
+	Argument<ArgumentType> | Array<Argument<ArgumentType>>
+	>;
 
 	#inputs!: string[];
 
@@ -16,7 +16,7 @@ export class ArgumentContext {
 		private readonly args: Array<Argument<ArgumentType>>,
 	) {
 		this.#inputs = ctx.args;
-
+		this.#data = new Collection();
 		this.#init();
 	}
 
@@ -32,18 +32,18 @@ export class ArgumentContext {
 
 		if (required) {
 			if (sent) {
-				await this.ctx.reply(
-					required.error
+				await this.ctx.reply({
+					text: required.error
 						? required.error instanceof Error
 							? required.error.message
 							: required.error
 						: `Missing ${required.name} argument, the datatype for this argument is ${required.type}`,
-				);
+				});
 			} else {
 				throw required.error instanceof Error
 					? required.error
 					: new Error(
-							required.error ??
+						required.error ??
 								`Missing ${required.name} argument, the datatype for this argument is ${required.type}`,
 					  );
 			}
@@ -95,14 +95,19 @@ export class ArgumentContext {
 			} else {
 				this.#data.set(argument.name, [values!, argument]);
 			}
+		} else if (argument.value) {
+			this.#data.set(argument.name, argument);
 		}
 
-		this.#data.set(argument.name, argument);
 		return true;
 	}
 
 	#init(): void {
 		for (const argument of this.args) {
+			if (argument.value) {
+				Reflect.deleteProperty(argument, 'value');
+			}
+
 			if (argument.isOption) {
 				const valueFromOption = this.ctx.getOption(argument.name);
 				valueFromOption.forEach((valueOption) => {
