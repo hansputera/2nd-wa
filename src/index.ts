@@ -34,9 +34,7 @@ async function launchBot(key: Types.GeneratedKey, client?: Client) {
 
 	client.ev.on('connection.update', async (conn) => {
 		if (conn.qr) {
-			qrImage
-				.image(conn.qr, {type: 'png'})
-				.pipe(createWriteStream('qr.png'));
+			qrImage.image(conn.qr, {type: 'png'}).pipe(createWriteStream('qr.png'));
 		}
 
 		if (conn.isNewLogin && conn.connection === 'open') {

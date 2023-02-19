@@ -25,19 +25,30 @@ export class StickerToMediaCommand extends BaseCommand {
 			getMediaKeys(replySticker?.mediaKey, 'sticker'),
 		);
 
-		gm(sticker).toBuffer(
-			replySticker?.isAnimated && !imageOnly ? 'gif' : 'png',
+		gm.subClass({
+			imageMagick: '7+',
+		})(sticker).toBuffer(
+			replySticker?.isAnimated && !imageOnly ? 'GIF' : 'PNG',
 			async (err, buff) => {
 				if (err) {
 					await context.reply({
-						text: 'Fail to convert the sticker, because ' + err.message,
+						text: err.message,
 					});
-				} else {
-					await context.reply({
-						image: buff,
-						caption: 'sticker converted at ' + Date.now().toString(),
-					});
+					return;
 				}
+
+				// TODO: gif bug, couldn't play the video
+				await context.reply({
+					caption: 'ok',
+					...(replySticker?.isAnimated && !imageOnly
+						? {
+							video: buff,
+							gifPlayback: true,
+						  }
+						: {
+							image: buff,
+						  }),
+				});
 			},
 		);
 	}

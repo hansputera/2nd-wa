@@ -16,11 +16,7 @@ export const messagesHandler = async (
 		if (text) {
 			if (schedulesRegex.test(text)) {
 				schedulesRegex.exec(text); // I don't know why, but it works
-				await schedulesHandler(
-					client,
-					msg,
-					schedulesRegex.exec(text) ?? [],
-				);
+				await schedulesHandler(client, msg, schedulesRegex.exec(text) ?? []);
 			}
 		}
 

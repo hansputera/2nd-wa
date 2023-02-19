@@ -84,8 +84,7 @@ export class CommandContext {
 		return (
 			(this.buttons as proto.Message.IListResponseMessage)?.singleSelectReply
 				?.selectedRowId ??
-			(this.buttons as proto.Message.ITemplateButtonReplyMessage)
-				?.selectedId ??
+			(this.buttons as proto.Message.ITemplateButtonReplyMessage)?.selectedId ??
 			(this.buttons as proto.Message.IButtonsResponseMessage)
 				?.selectedButtonId ??
 			undefined
@@ -103,9 +102,7 @@ export class CommandContext {
 	}
 
 	get command(): string | undefined {
-		return this.#data.ordered
-			.at(0)
-			?.value.slice(this.prefixMatch?.length ?? 0);
+		return this.#data.ordered.at(0)?.value.slice(this.prefixMatch?.length ?? 0);
 	}
 
 	getCommand<T extends BaseCommand>(): T {
